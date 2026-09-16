@@ -27,11 +27,11 @@ flowchart LR
     U[浏览器聊天页] -->|POST /api/chat| C[ChatController]
     C --> S[AgentService]
     S --> A[AiServices 动态代理]
-    A --> M[ChatLanguageModel<br/>DeepSeek 等]
-    A --> T[AgentTools<br/>@Tool 注解 4 个工具]
-    A --> R[TfidfContentRetriever<br/>RAG 检索]
-    A --> Mem[MessageWindowChatMemory<br/>会话记忆]
-    T --> KB[(resources/kb 知识库)]
+    A --> M["ChatLanguageModel<br/>DeepSeek 等"]
+    A --> T["AgentTools<br/>@Tool 注解 4 个工具"]
+    A --> R["TfidfContentRetriever<br/>RAG 检索"]
+    A --> Mem["MessageWindowChatMemory<br/>会话记忆"]
+    T --> KB[("resources/kb 知识库")]
     R --> KB
 ```
 
@@ -48,7 +48,7 @@ sequenceDiagram
     U->>A: 提问（如"年假怎么休？"）
     A->>LC4J: 调用 assistant.chat()
     LC4J->>LLM: 消息 + 系统提示 + 工具定义 + 记忆
-    LLM-->>LC4J: 返回 tool_calls: searchKnowledgeBase("年假")
+    LLM-->>LC4J: 返回 tool_calls: searchKnowledgeBase(年假)
     LC4J->>T: 执行工具
     T->>T: TF-IDF 检索知识库
     T-->>LC4J: 返回检索片段
@@ -122,50 +122,3 @@ kb-agent
 | 帮我算 (128+64)*3 | 调用计算器工具，返回 576 |
 | 北京天气怎么样？ | 调用天气工具（默认模拟数据） |
 | 公司什么时候成立的？ | 检索《公司简介》回答 |
-
-## 切换其他大模型
-
-本项目未绑定任何单一厂商，只要模型提供 OpenAI 兼容的 `/chat/completions` 接口即可：
-
-```yaml
-# 通义千问（兼容模式）
-llm:
-  base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
-  api-key: sk-xxx
-  model: qwen-plus
-
-# 智谱
-llm:
-  base-url: https://open.bigmodel.cn/api/paas/v4
-  api-key: xxx
-  model: glm-4-flash
-
-# 豆包（火山方舟）
-llm:
-  base-url: https://ark.cn-beijing.volces.com/api/v3
-  api-key: xxx
-  model: doubao-1-5-pro-32k-250115
-```
-
-> 提示：不同厂商的 OpenAI 兼容实现略有差异，个别厂商需在 `LlmConfig` 中按需调整请求参数。
-
-## 技术选型：为什么用 LangChain4j？
-
-- **生产级**：小厂 Agent 项目主流选择，工具调用循环、对话记忆、RAG 链路都是成熟封装，不用自己造轮子；
-- **学习成本低**：核心只学 3 个概念 —— `AiServices`（服务代理）、`@Tool`（工具注解）、`ContentRetriever`（检索接口）；
-- **可解释**：`handwritten-version/` 保留了 v1 手写版（自研 OpenAI 协议 + 自研 Agent 循环），面试时可对照讲解 Function Calling 底层原理；
-- **可扩展**：新增工具只需加一个 `@Tool` 方法；升级向量检索只需替换 `TfidfContentRetriever` 实现。
-
-## 生产化扩展点
-
-1. **向量检索**：文档量大时把 `TfidfIndex` 换成 Embedding + Milvus/ES/Redis 向量检索；
-2. **会话隔离**：`ToolCallTracker` 的 ThreadLocal 与共享 `ChatMemory` 仅适合演示，生产按 `sessionId` 隔离（`ChatMemoryProvider`）；
-3. **流式输出**：接口改为 `StreamingChatModel` + SSE，体验更好；
-4. **持久化**：对话日志、知识库管理入库（MySQL）；
-5. **安全**：接入统一鉴权、敏感词过滤、提示词注入防护、调用限流。
-
-## 常见问题
-
-- **没配 Key 能启动吗？** 能。页面/接口可访问，调用 `/api/chat` 时会返回友好提示；
-- **天气为什么是模拟数据？** 默认 `tools.weather.mock=true` 保证离线可演示；置为 `false` 走 Open-Meteo 免费真实天气；
-- **知识库怎么换成自己的？** 直接替换/新增 `resources/kb/*.md`，重启生效；生产建议接数据库或对象存储。
