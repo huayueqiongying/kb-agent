@@ -89,7 +89,7 @@ kb-agent
 ## 快速开始
 
 1. 到 [DeepSeek 开放平台](https://platform.deepseek.com) 注册，创建 API Key（新用户有免费额度）；
-2. 填入 `src/main/resources/application.yml`：
+2. 复制 `src/main/resources/application.yml.example` 为 `application.yml`，填入 Key（真实配置已加入 .gitignore，不会提交到仓库）：
 
    ```yaml
    llm:
