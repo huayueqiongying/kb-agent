@@ -4,6 +4,7 @@ import com.lc.kbagent.agent.AgentException;
 import com.lc.kbagent.agent.AgentReply;
 import com.lc.kbagent.agent.AgentService;
 import com.lc.kbagent.config.LlmProperties;
+import com.lc.kbagent.rag.KnowledgeBase;
 import com.lc.kbagent.tools.AgentTools;
 import com.lc.kbagent.web.dto.ChatRequest;
 import org.springframework.http.HttpStatus;
@@ -28,11 +29,14 @@ public class ChatController {
     private final AgentService agentService;
     private final AgentTools agentTools;
     private final LlmProperties llmProperties;
+    private final KnowledgeBase knowledgeBase;
 
-    public ChatController(AgentService agentService, AgentTools agentTools, LlmProperties llmProperties) {
+    public ChatController(AgentService agentService, AgentTools agentTools, LlmProperties llmProperties,
+                          KnowledgeBase knowledgeBase) {
         this.agentService = agentService;
         this.agentTools = agentTools;
         this.llmProperties = llmProperties;
+        this.knowledgeBase = knowledgeBase;
     }
 
     /**
@@ -59,11 +63,17 @@ public class ChatController {
      */
     @GetMapping("/health")
     public Map<String, Object> health() {
+        long kbDocs = knowledgeBase.chunks().stream()
+                .map(KnowledgeBase.Chunk::docName)
+                .distinct()
+                .count();
         return Map.of(
                 "status", "ok",
                 "model", llmProperties.getModel(),
                 "apiKeyConfigured", llmProperties.getApiKey() != null && !llmProperties.getApiKey().isBlank(),
-                "toolCount", agentTools.describeTools().size());
+                "toolCount", agentTools.describeTools().size(),
+                "kbDocs", kbDocs,
+                "kbChunks", knowledgeBase.chunks().size());
     }
 
     /** 参数错误 → 400 */
