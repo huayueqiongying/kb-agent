@@ -63,7 +63,6 @@ sequenceDiagram
 ```
 kb-agent
 ├── pom.xml
-├── handwritten-version/          # v1 手写 Function Calling 版（保留参考）
 └── src/main/
     ├── java/com/lc/kbagent/
     │   ├── config/               # 配置属性（Llm/Agent/Tool）
