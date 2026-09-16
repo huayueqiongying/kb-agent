@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 把自研 TF-IDF 检索封装为 LangChain4j 的 {@link ContentRetriever}，
+ * 把手写实现 TF-IDF 检索封装为 LangChain4j 的 {@link ContentRetriever}，
  * 从而接入 AiServices 的 RAG 链路（检索 → 增强 → 生成）。
  *
  * <p>升级为向量库召回（Milvus/ES 等）时只需替换本实现类，

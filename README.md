@@ -2,7 +2,7 @@
 
 基于 **Spring Boot 3 + LangChain4j** 实现的智能客服 / 知识库问答 Agent：
 大模型通过 **Function Calling（工具调用）** 自主决定调用「知识库检索 / 当前时间 / 安全计算器 / 天气查询」4 个工具，
-配合自研的 **TF-IDF 中文检索（RAG）** 回答企业内部制度、产品、流程类问题，显著降低模型幻觉。
+配合手写实现的 **TF-IDF 中文检索（RAG）** 回答企业内部制度、产品、流程类问题，显著降低模型幻觉。
 
 - 纯 Java 17 + Maven，零数据库、零中间件，`mvn package` 打成一个 jar 即可部署
 - 通过配置切换 **DeepSeek / 通义千问 / 智谱 / 豆包** 等任意 OpenAI 兼容大模型
@@ -16,7 +16,7 @@
 | 框架 | Spring Boot 3.3.5 | Web 容器 + Bean 管理 |
 | Agent 框架 | LangChain4j 1.0.0 | `AiServices` 自动完成工具调用循环 |
 | 大模型 | OpenAI 兼容协议（默认 DeepSeek） | 通过 `baseUrl` 切换各家模型 |
-| RAG 检索 | 自研 TF-IDF + 余弦相似度 | 中文 2-gram 分词，无第三方依赖 |
+| RAG 检索 | 手写实现 TF-IDF + 余弦相似度 | 中文 2-gram 分词，无第三方依赖 |
 | 前端 | 原生 HTML/JS | 单页面聊天界面 |
 | 构建 | Maven 3.9 + JDK 17 | 单一 fat jar |
 
@@ -64,9 +64,6 @@ sequenceDiagram
 kb-agent
 ├── pom.xml
 ├── handwritten-version/          # v1 手写 Function Calling 版（保留参考）
-├── docs/
-│   ├── 面试讲解.md                 # 面试高频问题与回答口径
-│   └── 简历项目描述.md              # 可直接粘贴到简历的项目描述
 └── src/main/
     ├── java/com/lc/kbagent/
     │   ├── config/               # 配置属性（Llm/Agent/Tool）
