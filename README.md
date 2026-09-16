@@ -92,33 +92,22 @@ kb-agent
 
 ## 快速开始
 
-1. **申请 API Key**：到 [DeepSeek 开放平台](https://platform.deepseek.com) 注册，新用户有免费额度（约几元即可跑大量测试）；
-2. **配置 Key**：编辑 `src/main/resources/application.yml`：
+1. 到 [DeepSeek 开放平台](https://platform.deepseek.com) 注册，创建 API Key（新用户有免费额度）；
+2. 填入 `src/main/resources/application.yml`：
 
    ```yaml
    llm:
-     api-key: sk-xxxxxxxxxxxxxxxx   # 填入你的 Key
+     api-key: sk-xxxxxxxxxxxxxxxx
    ```
 
-3. **运行**：
+3. 启动并访问：
 
    ```bash
    mvn spring-boot:run
-   # 或打包后运行
-   mvn -DskipTests package
-   java -jar target/kb-agent-2.0.0.jar
    ```
 
-4. **访问**：浏览器打开 `http://localhost:8080`，即可与 Agent 对话。
+   浏览器打开 `http://localhost:8080` 即可对话。
 
-试试这些问题：
+没配 Key 也能启动，页面正常打开，只是对话接口会提示未配置。默认知识库是虚构的"星辰科技"示例文档，替换 `resources/kb/` 下的 md 文件即可换成自己的内容。
 
-| 问题 | 期望行为 |
-|---|---|
-| 公司年假怎么休？ | 调用知识库检索，按《员工手册》回答 |
-| 报销金额 8000 要找谁审批？ | 检索报销流程并给出结论 |
-| 知识库问答产品多少钱？ | 检索《产品FAQ》回答价格 |
-| 现在几点了？ | 调用 getCurrentTime |
-| 帮我算 (128+64)*3 | 调用计算器工具，返回 576 |
-| 北京天气怎么样？ | 调用天气工具（默认模拟数据） |
-| 公司什么时候成立的？ | 检索《公司简介》回答 |
+可以试试：「公司年假怎么休？」「帮我算 (128+64)*3」「北京天气怎么样？」
